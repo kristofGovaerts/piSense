@@ -15,9 +15,9 @@ def sense_light(i, duration):
     while time.time() < end:
         if GPIO.input(i) != lOld:
             if GPIO.input(i):
-                print('\u263e')
+                print(GPIO.input(i))
             else:
-                print('\u263c')
+                print('no light')
         lOld = GPIO.input(i)
         time.sleep(0.2)
 

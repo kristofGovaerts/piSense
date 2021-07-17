@@ -7,10 +7,10 @@ GPIO.setwarnings(False)
 
 def activate_leds(ids, durations):
     for n, i in enumerate(ids):
-        GPIO.setup(id, GPIO.OUT)
-        GPIO.output(id, True)
+        GPIO.setup(i, GPIO.OUT)
+        GPIO.output(i, True)
         time.sleep(durations[n])
-        GPIO.output(id, False)
+        GPIO.output(i, False)
 
 
 if __name__ == '__main__':

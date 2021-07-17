@@ -5,7 +5,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
 
-def activate_led(ids, durations):
+def activate_leds(ids, durations):
     for n, i in enumerate(ids):
         GPIO.setup(id, GPIO.OUT)
         GPIO.output(id, True)

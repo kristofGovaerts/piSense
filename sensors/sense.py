@@ -10,9 +10,9 @@ def sense_light(i, duration):
     lOld = not GPIO.input(i)  # previous measurement
     print("Measuring ambient light for {} seconds.".format(duration))
     time.sleep(0.5)
-    end = time.perf_counter() + duration
+    end = time.time() + duration
 
-    while time.perf_counter() < end:
+    while time.time() < end:
         if GPIO.input(i) != lOld:
             if GPIO.input(i):
                 print('\u263e')

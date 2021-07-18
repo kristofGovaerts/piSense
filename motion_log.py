@@ -21,7 +21,7 @@ GPIO.setup(RED_PIN, GPIO.OUT)
 while True:
     if sense_motion(PIR_PIN):
         activate_leds([GREEN_PIN], [2])
-        h, t = sense_temp_hum(DHT11_PIN, wait=0)
+        h, t = sense_temp_hum(sensor, wait=0)
         print("""Temperature: {}, humidity: {}""".format(t, h))
 
     time.sleep(1)

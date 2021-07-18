@@ -9,7 +9,6 @@ def activate_leds(ids, durations):
     start = time.clock()
     now = time.clock()
     for n, i in enumerate(ids): # need a while loop
-        GPIO.setup(i, GPIO.OUT)
         GPIO.output(i, True)
         time.sleep(durations[n])
         GPIO.output(i, False)

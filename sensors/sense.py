@@ -7,8 +7,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
 
-def sense_temp_hum(i, wait=2):
-    sensor = adafruit_dht.DHT11(i)
+def sense_temp_hum(sensor, wait=2):
     time.sleep(wait)  # wait for sensor to cool down - 2sec default but can omit if this is done elsewhere
     try:
         hum = sensor.humidity
@@ -22,7 +21,6 @@ def sense_temp_hum(i, wait=2):
 
 
 def sense_motion(i):
-    GPIO.setup(i, GPIO.IN)
     return GPIO.input(i)
 
 

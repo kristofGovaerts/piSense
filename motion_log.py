@@ -20,6 +20,7 @@ GPIO.setup(GREEN_PIN, GPIO.OUT)
 GPIO.setup(RED_PIN, GPIO.OUT)
 
 while True:
+    # todo: respond to high-frequency motion by changing led color.
     if sense_motion(PIR_PIN):
         activate_leds([GREEN_PIN], [2])
         h, t = sense_temp_hum(sensor, wait=0)

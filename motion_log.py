@@ -6,7 +6,7 @@ from sensors.sense import sense_temp_hum, sense_motion
 import time
 
 PIR_PIN = 23  # motion detector
-DHT11_PIN = 11  # temp/hum
+DHT11_PIN = 17  # temp/hum
 GREEN_PIN = 26  # green led
 RED_PIN = 16  # red led
 

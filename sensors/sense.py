@@ -13,10 +13,15 @@ def sense_temp_hum(sensor, wait=2):
         hum = sensor.humidity
         temp = sensor.temperature
     except RuntimeError:
-        print("Retrying DHT11 measurement...")
+        print("Retrying DHT11 measurement once.")
         time.sleep(2)
-        hum = sensor.humidity
-        temp = sensor.temperature
+        try:
+            hum = sensor.humidity
+            temp = sensor.temperature
+        except RuntimeError:
+            print("DHT11 measurement failed. Returning None.")
+            hum = None
+            temp = None
     return hum, temp
 
 

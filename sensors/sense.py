@@ -1,6 +1,6 @@
 import RPi.GPIO as GPIO
 import time
-import adafruit_dht  # Tools for eading from the DHT sensor (temperature/humidity)
+import adafruit_dht  # Tools for reading from the DHT sensor (temperature/humidity)
 #https://github.com/adafruit/Adafruit_CircuitPython_DHT
 
 GPIO.setmode(GPIO.BCM)
@@ -10,9 +10,15 @@ GPIO.setwarnings(False)
 def sense_temp_hum(i, wait=2):
     sensor = adafruit_dht.DHT11(i)
     time.sleep(wait)  # wait for sensor to cool down - 2sec default but can omit if this is done elsewhere
-    humidity = sensor.humidity
-    temperature = sensor.temperature
-    return humidity, temperature
+    try:
+        hum = sensor.humidity
+        temp = sensor.temperature
+    except RuntimeError:
+        print("Retrying DHT11 measurement...")
+        time.sleep(2)
+        hum = sensor.humidity
+        temp = sensor.temperature
+    return hum, temp
 
 
 def sense_motion(i):

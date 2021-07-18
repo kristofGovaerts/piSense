@@ -1,15 +1,23 @@
 import RPi.GPIO as GPIO
 import time
-import Adafruit_DHT  # Tools for eading from the DHT sensor (temperature/humidity)
+import adafruit_dht  # Tools for eading from the DHT sensor (temperature/humidity)
+#https://github.com/adafruit/Adafruit_CircuitPython_DHT
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
 
-def sense_temp_hum(i):
-    sensor = Adafruit_DHT.DHT11
-    humidity, temperature = Adafruit_DHT.read_retry(sensor, i)
+def sense_temp_hum(i, wait=2):
+    sensor = adafruit_dht.DHT11(i)
+    time.sleep(wait)  # wait for sensor to cool down - 2sec default but can omit if this is done elsewhere
+    humidity = sensor.humidity
+    temperature = sensor.temperature
     return humidity, temperature
+
+
+def sense_motion(i):
+    GPIO.setup(i, GPIO.IN)
+    return GPIO.input(i)
 
 
 def sense_light(i, duration):

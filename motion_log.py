@@ -23,7 +23,7 @@ GPIO.setup(RED_PIN, GPIO.OUT)
 # initialize reporting
 save_report()  # initialize file
 last20 = [None] * 20  # initialize
-last_motion = current_time()
+last_motion = timestr_to_delta(current_time())
 active = False
 
 while True:

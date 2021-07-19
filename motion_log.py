@@ -18,7 +18,9 @@ RED_PIN = 16  # red led
 sensor = adafruit_dht.DHT11(DHT11_PIN)
 GPIO.setup(PIR_PIN, GPIO.IN)
 GPIO.setup(GREEN_PIN, GPIO.OUT)
+GPIO.output(GREEN_PIN, False)  # turn off
 GPIO.setup(RED_PIN, GPIO.OUT)
+GPIO.output(RED_PIN, False)
 
 # initialize reporting
 save_report()  # initialize file

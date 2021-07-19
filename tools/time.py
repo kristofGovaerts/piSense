@@ -9,7 +9,7 @@ def timestr_to_delta(timestr):
     return datetime.strptime(timestr, "%Y-%m-%d %H:%M:%S")
 
 
-def is_active(timestamps, f=30, t=20):
+def is_active(timestamps, f=20, t=15):
     """
     Determine whether or not there is active (high-frequency) motion in a list of timestamps.
     :param timestamps: A list of timestamps, should be ordered chronologically.

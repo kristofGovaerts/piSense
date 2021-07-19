@@ -24,7 +24,7 @@ GPIO.output(RED_PIN, False)
 
 # initialize reporting
 save_report()  # initialize file
-last20 = [None] * 20  # initialize
+last15 = [None] * 15  # initialize
 last_motion = timestr_to_delta(current_time())
 active = False
 
@@ -36,12 +36,12 @@ while True:
         ts = current_time()  # timestamp as str
         last_motion = timestr_to_delta(ts)
 
-        d = last20.pop(0)  # remove oldest imestamp
-        last20.append(ts)
+        d = last15.pop(0)  # remove oldest imestamp
+        last15.append(ts)
 
         # red LED flickers for 1s for each motion. Green pin activates if is_active, otherwise it shuts down.
         GPIO.output(RED_PIN, True)
-        if is_active(last20):
+        if is_active(last15):
             GPIO.output(GREEN_PIN, True)
             active = True
         else:

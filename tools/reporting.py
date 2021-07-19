@@ -7,5 +7,5 @@ def save_report():
 
 def add_line(pars):
     with open('log.csv', 'a') as f:
-        s = '\t'.join(pars) + '\n'
+        s = '\t'.join([str(p) for p in pars]) + '\n'
         f.write(s)

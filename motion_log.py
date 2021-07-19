@@ -30,6 +30,7 @@ active = False
 
 while True:
     # TODO: try sensing less often
+    # TODO: always turn off LEDs after script
     if sense_motion(PIR_PIN):
         h, t = sense_temp_hum(sensor, wait=0)
         ts = current_time()  # timestamp as str

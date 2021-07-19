@@ -10,8 +10,9 @@ from tools.reporting import *
 from tools.time import current_time, is_active, timestr_to_delta
 
 # globals
-ACTIVITY_NUM = 10
-ACTIVITY_THRESH = 15
+ACTIVITY_NUM = 10  # number of activations to cache, minimum amount to caclulate frequency from
+ACTIVITY_THRESH = 15  # frequency threshold in activations per minute.
+ACTIVITY_STOP = 5  # max inactive time allowed in seconds before the activity flag is turned off again.
 
 # define pins
 PIR_PIN = 23  # motion detector
@@ -47,9 +48,11 @@ while True:
         # red LED flickers for 1s for each motion. Green pin activates if is_active, otherwise it shuts down.
         GPIO.output(RED_PIN, True)
         if is_active(lastN, t=ACTIVITY_NUM, f=ACTIVITY_THRESH):
+            # here we want to start filming until is_active becomes false.
             GPIO.output(GREEN_PIN, True)
             active = True
         else:
+            # here we want to take a picture and send
             GPIO.output(GREEN_PIN, False)
             active = False
 
@@ -59,7 +62,7 @@ while True:
         GPIO.output(RED_PIN, False)
 
     delta = timestr_to_delta(current_time()) - last_motion
-    if delta.total_seconds() > 20:
+    if delta.total_seconds() > ACTIVITY_STOP:
         GPIO.output(GREEN_PIN, False)
         active = False
 

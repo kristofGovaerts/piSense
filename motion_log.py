@@ -9,6 +9,11 @@ from sensors.sense import sense_temp_hum, sense_motion
 from tools.reporting import *
 from tools.time import current_time, is_active, timestr_to_delta
 
+# globals
+ACTIVITY_NUM = 10
+ACTIVITY_THRESH = 15
+
+# define pins
 PIR_PIN = 23  # motion detector
 DHT11_PIN = 17  # temp/hum
 GREEN_PIN = 26  # green led
@@ -24,7 +29,7 @@ GPIO.output(RED_PIN, False)
 
 # initialize reporting
 save_report()  # initialize file
-last15 = [None] * 15  # initialize
+lastN = [None] * ACTIVITY_NUM  # initialize
 last_motion = timestr_to_delta(current_time())
 active = False
 
@@ -36,12 +41,12 @@ while True:
         ts = current_time()  # timestamp as str
         last_motion = timestr_to_delta(ts)
 
-        d = last15.pop(0)  # remove oldest imestamp
-        last15.append(ts)
+        d = lastN.pop(0)  # remove oldest timestamp
+        lastN.append(ts)
 
         # red LED flickers for 1s for each motion. Green pin activates if is_active, otherwise it shuts down.
         GPIO.output(RED_PIN, True)
-        if is_active(last15):
+        if is_active(lastN, t=ACTIVITY_NUM, f=ACTIVITY_THRESH):
             GPIO.output(GREEN_PIN, True)
             active = True
         else:
@@ -50,7 +55,7 @@ while True:
 
         print("""Timestamp: {} --- Temperature: {}, humidity: {}, is_active: {}""".format(ts, t, h, active))
         add_line([ts, t, h, active])
-        time.sleep(1)
+        time.sleep(0.5)
         GPIO.output(RED_PIN, False)
 
     delta = timestr_to_delta(current_time()) - last_motion

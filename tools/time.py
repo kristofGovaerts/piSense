@@ -27,10 +27,8 @@ def is_active(timestamps, f=20, t=15):
         delta = timestr_to_delta(timestamps[-1]) - timestr_to_delta(timestamps[0])
         freq = n/(delta.total_seconds()/60)  # convert to per min rather than per sec
         if freq >= f:
-            print(freq)
             out = True
         else:
-            print(freq)
             out = False
 
     return out

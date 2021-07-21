@@ -51,6 +51,7 @@ while True:
         if is_active(lastN, t=ACTIVITY_NUM, f=ACTIVITY_THRESH):
             # here we want to start filming until is_active becomes false.
             if not active:
+                # this means it's the start of the active period
                 send_alert('test', output)
             GPIO.output(GREEN_PIN, True)
             active = True

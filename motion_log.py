@@ -10,7 +10,7 @@ from tools.reporting import *
 from tools.time import current_time, is_active, timestr_to_delta
 
 # globals
-ACTIVITY_NUM = 10  # number of activations to cache, minimum amount to caclulate frequency from
+ACTIVITY_NUM = 5  # number of activations to cache, minimum amount to caclulate frequency from
 ACTIVITY_THRESH = 15  # frequency threshold in activations per minute.
 ACTIVITY_STOP = 5  # max inactive time allowed in seconds before the activity flag is turned off again.
 
@@ -47,8 +47,11 @@ while True:
 
         # red LED flickers for 1s for each motion. Green pin activates if is_active, otherwise it shuts down.
         GPIO.output(RED_PIN, True)
+        output = """Timestamp: {} --- Temperature: {}, humidity: {}, is_active: {}""".format(ts, t, h, active)
         if is_active(lastN, t=ACTIVITY_NUM, f=ACTIVITY_THRESH):
             # here we want to start filming until is_active becomes false.
+            if not active:
+                send_alert('test', output)
             GPIO.output(GREEN_PIN, True)
             active = True
         else:
@@ -56,7 +59,8 @@ while True:
             GPIO.output(GREEN_PIN, False)
             active = False
 
-        print("""Timestamp: {} --- Temperature: {}, humidity: {}, is_active: {}""".format(ts, t, h, active))
+
+        print(output)
         add_line([ts, t, h, active])
         time.sleep(0.5)
         GPIO.output(RED_PIN, False)

@@ -8,7 +8,7 @@ import time
 from sensors.sense import sense_temp_hum, sense_motion
 from tools.reporting import *
 from tools.time import current_time, is_active, timestr_to_delta
-from sensors.camera import camera_start, camera_stop
+from sensors.camera import camera_start, camera_stop, take_photo
 
 # globals
 ACTIVITY_NUM = 2  # number of activations to cache, minimum amount to caclulate frequency from
@@ -55,8 +55,9 @@ while True:
             if not active:
                 # this means it's the start of the active period
                 active = True
-                current_name = current_time() + '.h264'
-                camera_start(name=current_name)
+                current_name = current_time()
+                take_photo(current_name + '.jpg')
+                camera_start(name=current_name + '.h264')
             GPIO.output(GREEN_PIN, True)
             active = True
         else:

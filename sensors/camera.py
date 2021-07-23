@@ -17,6 +17,15 @@ def camera_stop():
     camera.stop_preview()
 
 
+def take_photo(name=None):
+    if name is None:
+        name = current_time() + '.jpg'
+    print("Taking a photo...")
+    camera.start_preview()
+    sleep(5)
+    camera.capture('/home/pi/Desktop/image.jpg')
+    camera.stop_preview()
+
 if __name__ == '__main__':
     print("Recording for five secs...")
     camera_start(name='test.h264')

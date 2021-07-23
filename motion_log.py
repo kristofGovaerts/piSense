@@ -8,6 +8,7 @@ import time
 from sensors.sense import sense_temp_hum, sense_motion
 from tools.reporting import *
 from tools.time import current_time, is_active, timestr_to_delta
+from sensors.camera import camera_start, camera_stop
 
 # globals
 ACTIVITY_NUM = 3  # number of activations to cache, minimum amount to caclulate frequency from
@@ -33,6 +34,7 @@ save_report()  # initialize file
 lastN = [None] * ACTIVITY_NUM  # initialize
 last_motion = timestr_to_delta(current_time())
 active = False
+current_name = current_time()
 
 while True:
     # TODO: try sensing less often
@@ -53,7 +55,8 @@ while True:
             if not active:
                 # this means it's the start of the active period
                 active = True
-                send_alert('test', output.format(ts, t, h, active))
+                current_name = current_time()
+                camera_start()
             GPIO.output(GREEN_PIN, True)
             active = True
         else:
@@ -70,5 +73,7 @@ while True:
     if delta.total_seconds() > ACTIVITY_STOP:
         GPIO.output(GREEN_PIN, False)
         active = False
+        camera.stop()
+        send_alert(current_name, output.format(current_name, t, h, active))
 
     time.sleep(1)

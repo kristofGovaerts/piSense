@@ -31,8 +31,7 @@ def send_alert(c1, c2):
 
     # filestack code:
     client = Client(key2)
-    # new_filelink = client.upload(filepath=c1).url
-    new_filelink = 'test'
+    new_filelink = client.upload(filepath=c1).url
 
     u = r'https://maker.ifttt.com/trigger/trigger/with/key/' + key1
     j = {"value1" : new_filelink,

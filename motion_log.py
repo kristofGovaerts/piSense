@@ -11,9 +11,9 @@ from tools.time import current_time, is_active, timestr_to_delta
 from sensors.camera import camera_start, camera_stop
 
 # globals
-ACTIVITY_NUM = 3  # number of activations to cache, minimum amount to caclulate frequency from
+ACTIVITY_NUM = 2  # number of activations to cache, minimum amount to caclulate frequency from
 ACTIVITY_THRESH = 15  # frequency threshold in activations per minute.
-ACTIVITY_STOP = 5  # max inactive time allowed in seconds before the activity flag is turned off again.
+ACTIVITY_STOP = 3  # max inactive time allowed in seconds before the activity flag is turned off again.
 
 # define pins
 PIR_PIN = 23  # motion detector

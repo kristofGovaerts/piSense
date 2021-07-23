@@ -2,7 +2,7 @@ from picamera import PiCamera
 import time
 from tools.time import current_time
 
-camera = PiCamera
+camera = PiCamera()
 
 
 def camera_start(name=None):

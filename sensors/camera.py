@@ -15,3 +15,9 @@ def camera_start(name=None):
 def camera_stop():
     camera.stop_recording()
     camera.stop_preview()
+
+
+if __name__ == '__main__':
+    print("Recording for five secs...")
+    camera_start(name='test.h264')
+    camera_stop()

@@ -62,7 +62,7 @@ while True:
         else:
             # here we want to take a picture and send
             GPIO.output(GREEN_PIN, False)
-            active = False
+            # active = False
 
         print(output.format(ts, t, h, active))
         add_line([ts, t, h, active])

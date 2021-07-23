@@ -23,7 +23,7 @@ def take_photo(name=None):
     print("Taking a photo...")
     camera.start_preview()
     time.sleep(5)
-    camera.capture('/home/pi/Desktop/image.jpg')
+    camera.capture(name)
     camera.stop_preview()
 
 if __name__ == '__main__':

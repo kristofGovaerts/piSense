@@ -57,6 +57,7 @@ while True:
                 active = True
                 current_name = current_time()
                 take_photo(current_name + '.jpg')
+                send_alert(current_name + '.jpg', output.format(current_name, t, h, active))
                 camera_start(name=current_name + '.h264')
             GPIO.output(GREEN_PIN, True)
             active = True
@@ -75,6 +76,5 @@ while True:
         GPIO.output(GREEN_PIN, False)
         active = False
         camera_stop()
-        send_alert(current_name, output.format(current_name, t, h, active))
 
     time.sleep(1)

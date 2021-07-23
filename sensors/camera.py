@@ -7,9 +7,9 @@ camera = PiCamera()
 
 def camera_start(name=None):
     if name is None:
-        name = current_time()
+        name = current_time()  + '.h264'
     camera.start_preview()
-    camera.start_recording(name + '.h264')
+    camera.start_recording(name)
 
 
 def camera_stop():

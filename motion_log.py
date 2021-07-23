@@ -55,8 +55,8 @@ while True:
             if not active:
                 # this means it's the start of the active period
                 active = True
-                current_name = current_time()
-                camera_start()
+                current_name = current_time() + '.h264'
+                camera_start(name=current_name)
             GPIO.output(GREEN_PIN, True)
             active = True
         else:
@@ -73,7 +73,7 @@ while True:
     if delta.total_seconds() > ACTIVITY_STOP:
         GPIO.output(GREEN_PIN, False)
         active = False
-        camera.stop()
+        camera_stop()
         send_alert(current_name, output.format(current_name, t, h, active))
 
     time.sleep(1)

@@ -44,3 +44,9 @@ def compare_frames(f1, f2, input='rgb', thresh=20):
     delta = np.abs(g1-g2)
     frac_different = len(delta[delta>thresh]) / np.prod(delta.shape)
     return frac_different
+
+
+def compare_with_cache(f1, cache, input='rgb', thresh=20):
+    deltas = [compare_frames(f1, f, input=input, thresh=thresh) for f in cache]
+    mean_frac = np.mean(deltas)
+    return mean_frac

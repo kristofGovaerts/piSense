@@ -8,7 +8,7 @@ import time
 from sensors.sense import sense_temp_hum, sense_motion
 from tools.reporting import *
 from tools.time import current_time, is_active, timestr_to_delta
-from sensors.camera import camera_start, camera_stop, take_photo
+from sensors.camera import take_photo, get_frame
 
 # globals
 ACTIVITY_NUM = 3  # number of activations to cache, minimum amount to caclulate frequency from

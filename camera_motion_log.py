@@ -15,7 +15,7 @@ from sensors.camera import get_frame, compare_with_cache
 # globals
 CACHE_NUM = 3  # number of activations to cache, minimum amount to calculate activity from
 DELTA_THRESH = 0.01
-FRAMERATE_REST = 1.0/15.0
+FRAMERATE_REST = 1.0/5.0
 FRAMERATE_ACTIVE = 1.0
 
 # define pins
@@ -39,11 +39,13 @@ while True:
     if d > DELTA_THRESH:
         h, t = sense_temp_hum(sensor, wait=0)
         output = """Timestamp: {} --- Temperature: {}, humidity: {}, is_active: {}"""
+        add_line([current_name, t, h, active])
         print("Activity detected! {}".format(np.round(d, 3)))
         print(output.format(current_name, t, h, active))
         cv2.imwrite(current_name + '.png', f)
         if not active:
-            cv2.imwrite(bg + '.png', bg)
+            cv2.imwrite(current_name + '.png', bg)
+            send_alert(current_name + '.png', output.format(current_name, t, h, active))
         active = True
     else:
         print("No activity. {}".format(np.round(d, 3)))

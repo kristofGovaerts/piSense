@@ -9,7 +9,7 @@ import imutils
 import cv2
 from sensors.sense import sense_temp_hum
 from tools.reporting import *
-from tools.time import current_time
+from tools.time import current_time, timestr_to_delta
 from sensors.camera import get_frame, compare_with_cache, write_difference_figure
 
 # globals
@@ -17,6 +17,7 @@ CACHE_NUM = 3  # number of activations to cache, minimum amount to calculate act
 DELTA_THRESH = 0.01
 FRAMERATE_REST = 1.0 / 5.0
 FRAMERATE_ACTIVE = 1.0
+ALERT_INTERVAL = 120
 
 # define pins
 DHT11_PIN = 17  # temp/hum
@@ -30,6 +31,7 @@ active = False
 current_name = current_time()
 frame_buf = [imutils.resize(get_frame(), width=500) for i in range(CACHE_NUM)]
 bg = frame_buf[0]
+last_alert = None
 
 while True:
     current_name = current_time()
@@ -48,7 +50,15 @@ while True:
             cv2.imwrite(current_name + '_BG.jpg', bg)
             di = np.abs(np.array(cv2.cvtColor(bg, cv2.COLOR_RGB2GRAY)).astype('float32')
                         - np.array(cv2.cvtColor(f_small, cv2.COLOR_RGB2GRAY)).astype('float32'))
-            send_alert(current_name + '.jpg', output.format(current_name, t, h, active))
+            if last_alert is None:
+                send_alert(current_name + '.jpg', output.format(current_name, t, h, active))
+                last_alert = timestr_to_delta(current_name)
+            elif last_alert is not None and (timestr_to_delta(current_name) -
+                                             last_alert).total_seconds() > ALERT_INTERVAL:
+                send_alert(current_name + '.jpg', output.format(current_name, t, h, active))
+                last_alert = timestr_to_delta(current_name)
+            else:
+                print("Last alert was recent. Not sending.")
         active = True
     else:
         bg = frame_buf[0]  # we only want to update bg if there is no activity

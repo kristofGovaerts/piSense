@@ -19,6 +19,7 @@ FRAMERATE_REST = 1.0 / 5.0
 FRAMERATE_ACTIVE = 1.0
 ALERT_INTERVAL = 120
 
+print("Initalizing sensors...")
 # define pins
 DHT11_PIN = 17  # temp/hum
 
@@ -33,6 +34,7 @@ frame_buf = [imutils.resize(get_frame(), width=500) for i in range(CACHE_NUM)]
 bg = frame_buf[0]
 last_alert = None
 
+print("Start recording at {}".format(current_name))
 while True:
     current_name = current_time()
     f = get_frame()

@@ -30,7 +30,7 @@ def take_photo(name=None, exposure=1.0):
     camera.stop_preview()
 
 
-def compare_frames(f1, f2, input='rgb', thresh=20):
+def compare_frames(f1, f2, input='rgb', thresh=20, blur=(21, 21)):
     if input == 'rgb':
         g1 = cv2.cvtColor(f1, cv2.COLOR_RGB2GRAY)
         g2 = cv2.cvtColor(f2, cv2.COLOR_RGB2GRAY)
@@ -38,8 +38,8 @@ def compare_frames(f1, f2, input='rgb', thresh=20):
         g1 = f1
         g2 = f2
 
-    g1 = np.array(g1).astype('float32')
-    g2 = np.array(g2).astype('float32')
+    g1 = cv2.GaussianBlur(np.array(g1).astype('float32'), blur, 0)
+    g2 = cv2.GaussianBlur(np.array(g2).astype('float32'), blur, 0)
 
     delta = np.abs(g1-g2)
     frac_different = len(delta[delta>thresh]) / np.prod(delta.shape)

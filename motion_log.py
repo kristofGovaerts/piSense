@@ -67,8 +67,8 @@ while True:
             # GPIO.output(GREEN_PIN, True)
             active = True
         else:
-            GPIO.output(GREEN_PIN, False)
-            # active = False
+            # GPIO.output(GREEN_PIN, False)
+            active = False
 
         print(output.format(ts, t, h, active))
         add_line([ts, t, h, active])

@@ -3,9 +3,9 @@ this code senses motion using only the camera, and generates a log.
 """
 
 import adafruit_dht
-import RPi.GPIO as GPIO
 import time
-from sensors.sense import sense_temp_hum, sense_motion
+import numpy as np
+from sensors.sense import sense_temp_hum
 from tools.reporting import *
 from tools.time import current_time, is_active, timestr_to_delta
 from sensors.camera import get_frame, compare_with_cache
@@ -23,11 +23,6 @@ sensor = adafruit_dht.DHT11(DHT11_PIN)
 
 # initialize reporting
 save_report()  # initialize file
-lastN = [None] * ACTIVITY_NUM  # initialize
-last_motion = timestr_to_delta(current_time())
-active = False
-current_name = current_time()
-last_photo = timestr_to_delta(current_time())
 frame_buf = [get_frame() for i in CACHE_NUM]
 
 while True:

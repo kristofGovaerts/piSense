@@ -9,13 +9,13 @@ import imutils
 import cv2
 from sensors.sense import sense_temp_hum
 from tools.reporting import *
-from tools.time import current_time, is_active, timestr_to_delta
-from sensors.camera import get_frame, compare_with_cache
+from tools.time import current_time
+from sensors.camera import get_frame, compare_with_cache, write_difference_figure
 
 # globals
 CACHE_NUM = 3  # number of activations to cache, minimum amount to calculate activity from
 DELTA_THRESH = 0.01
-FRAMERATE_REST = 1.0/5.0
+FRAMERATE_REST = 1.0 / 5.0
 FRAMERATE_ACTIVE = 1.0
 
 # define pins
@@ -42,20 +42,21 @@ while True:
         add_line([current_name, t, h, active])
         print("Activity detected! {}".format(np.round(d, 3)))
         print(output.format(current_name, t, h, active))
-        cv2.imwrite(current_name + '.png', f)
+        cv2.imwrite(current_name + '.jpg', f)
+        write_difference_figure(bg, f_small, current_name + '_D.jpg')
         if not active:
-            cv2.imwrite(current_name + '.png', bg)
-            send_alert(current_name + '.png', output.format(current_name, t, h, active))
+            cv2.imwrite(current_name + '_BG.jpg', bg)
+            di = np.abs(np.array(cv2.cvtColor(bg, cv2.COLOR_RGB2GRAY)).astype('float32')
+                        - np.array(cv2.cvtColor(f_small, cv2.COLOR_RGB2GRAY)).astype('float32'))
+            send_alert(current_name + '.jpg', output.format(current_name, t, h, active))
         active = True
     else:
-        print("No activity. {}".format(np.round(d, 3)))
-        bg = frame_buf[0] # we only want to update bg if there is no activity
+        bg = frame_buf[0]  # we only want to update bg if there is no activity
         active = False
 
     frame_buf = frame_buf[1:] + [f_small]
 
     if active:
-        time.sleep(1/FRAMERATE_ACTIVE)
+        time.sleep(1 / FRAMERATE_ACTIVE)
     else:
-        time.sleep(1/FRAMERATE_REST)
-
+        time.sleep(1 / FRAMERATE_REST)

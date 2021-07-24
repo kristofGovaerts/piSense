@@ -4,6 +4,9 @@ import time
 from tools.time import current_time
 import cv2
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
 camera = PiCamera()
 
@@ -50,3 +53,17 @@ def compare_with_cache(f1, cache, input='rgb', thresh=20):
     deltas = [compare_frames(f1, f, input=input, thresh=thresh) for f in cache]
     mean_frac = np.mean(deltas)
     return mean_frac
+
+
+def write_difference_figure(bg, im, dest):
+    bg = np.array(cv2.cvtColor(bg, cv2.COLOR_RGB2GRAY)).astype('float32')
+    im = np.array(cv2.cvtColor(im, cv2.COLOR_RGB2GRAY)).astype('float32')
+    d = np.abs(bg-im)
+
+    d_ratio = d.shape[0]/d.shape[1]
+    fig = plt.figure(figsize=(5, 5))
+    plt.imshow(d, vmin=0, vmax=100)
+    plt.colorbar(orientation='horizontal')
+    plt.tight_layout()
+    fig.savefig(dest)
+

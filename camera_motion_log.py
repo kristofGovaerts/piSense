@@ -23,12 +23,11 @@ sensor = adafruit_dht.DHT11(DHT11_PIN)
 
 # initialize reporting
 save_report()  # initialize file
-frame_buf = [get_frame() for i in CACHE_NUM]
+frame_buf = [get_frame() for i in range(CACHE_NUM)]
 
 while True:
     f = get_frame()
     d = compare_with_cache(f, frame_buf)
-    print
     if d < DELTA_THRESH:
         print("Activity detected! {}".format(np.round(d, 3)))
     else:

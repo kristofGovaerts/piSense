@@ -98,4 +98,5 @@ def write_difference_figure(bg, im, dest):
     plt.colorbar(orientation='horizontal')
     plt.tight_layout()
     fig.savefig(dest)
+    plt.close(fig)
 

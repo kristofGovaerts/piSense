@@ -21,7 +21,6 @@ DHT11_PIN = 17  # temp/hum
 
 # initialize sensors
 sensor = adafruit_dht.DHT11(DHT11_PIN)
-GPIO.setup(PIR_PIN, GPIO.IN)
 
 # initialize reporting
 save_report()  # initialize file

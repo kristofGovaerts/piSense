@@ -14,7 +14,7 @@ def get_frame(bw=False):
         camera.capture(output, 'rgb')
         out = output.array
         print('Captured %dx%d image' % (
-                output.array.shape[1], output.array.shape[0]))
+                out.shape[1], out.shape[0]))
     if bw:
         out = cv2.cvtColor(a, cv2.COLOR_RGB2GRAY)
     return out

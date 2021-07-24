@@ -33,6 +33,6 @@ while True:
     else:
         print("No activity. {}".format(np.round(d, 3)))
 
-    frame_buf = frame_buf[1:] + f
+    frame_buf = frame_buf[1:] + [f]
     time.sleep(1/FRAMERATE)
 

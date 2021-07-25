@@ -11,7 +11,7 @@ import cv2
 from sensors.sense import sense_temp_hum, sense_motion
 from tools.reporting import *
 from tools.time import current_time, timestr_to_delta
-from sensors.camera import get_frame, compare_with_cache, write_difference_figure
+from sensors.camera import get_frame, compare_with_cache, write_difference_figure, compare_frames
 
 # globals
 CACHE_NUM = 3  # number of activations to cache, minimum amount to calculate activity from
@@ -50,7 +50,10 @@ while True:
         last_motion = timestr_to_delta(current_name)
         f = get_frame()
         f_small = imutils.resize(f, width=500)
-        d = compare_with_cache(f_small, frame_buf)
+        if not active:
+            d = compare_frames(f_small, bg)
+        else:
+            d = compare_with_cache(f_small, frame_buf)
         if d > DELTA_THRESH:
             h, t = sense_temp_hum(sensor, wait=0)
             output = """Timestamp: {} --- Temperature: {}, humidity: {}, is_active: {}"""

@@ -4,7 +4,7 @@ this code senses motion using only the camera, assuming the motion sensor was ac
 
 import RPi.GPIO as GPIO
 import adafruit_dht
-import time
+import time, os
 import numpy as np
 import imutils
 import cv2
@@ -29,7 +29,8 @@ sensor = adafruit_dht.DHT11(DHT11_PIN)
 GPIO.setup(PIR_PIN, GPIO.IN)
 
 # initialize reporting
-save_report()  # initialize file
+if not os.path.exists('log.csv'):
+    save_report()  # initialize file
 recording = False
 active = False
 current_name = current_time()

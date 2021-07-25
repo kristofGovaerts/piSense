@@ -44,6 +44,7 @@ print("Start recording at {}".format(current_name))
 while True:
     if sense_motion(PIR_PIN):
         recording = True
+        print("Recording...")
     if recording:
         current_name = current_time()
         last_motion = timestr_to_delta(current_name)
@@ -76,6 +77,7 @@ while True:
             bg = frame_buf[0]  # we only want to update bg if there is no activity
             active = False
             recording = False
+            print("Stop recording.")
 
         frame_buf = frame_buf[1:] + [f_small]
     else:

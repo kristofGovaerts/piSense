@@ -36,11 +36,14 @@ frame_buf = [imutils.resize(get_frame(), width=500) for i in range(CACHE_NUM)]
 bg = frame_buf[0]
 last_alert = None
 last_capture = None
+last_motion = None
 
 print("Start recording at {}".format(current_name))
 while True:
-    if sense_motion(PIR_PIN):
+    if sense_motion(PIR_PIN) and (timestr_to_delta(current_time()) -
+                                  last_motion).total_seconds() < 5:
         current_name = current_time()
+        last_motion = timestr_to_delta(current_name)
         f = get_frame()
         f_small = imutils.resize(f, width=500)
         d = compare_with_cache(f_small, frame_buf)
@@ -75,6 +78,7 @@ while True:
         if not active and (last_capture is None or (timestr_to_delta(current_time()) -
                                                     last_capture).total_seconds() > BG_INTERVAL):
             print("Refreshing background.")
+            last_capture = timestr_to_delta(current_time())
             f = get_frame()
             f_small = imutils.resize(f, width=500)
             bg = f_small

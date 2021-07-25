@@ -30,6 +30,7 @@ GPIO.setup(PIR_PIN, GPIO.IN)
 
 # initialize reporting
 save_report()  # initialize file
+recording = False
 active = False
 current_name = current_time()
 frame_buf = [imutils.resize(get_frame(), width=500) for i in range(CACHE_NUM)]
@@ -40,8 +41,9 @@ last_motion = None
 
 print("Start recording at {}".format(current_name))
 while True:
-    if sense_motion(PIR_PIN) and (timestr_to_delta(current_time()) -
-                                  last_motion).total_seconds() < 5:
+    if sense_motion(PIR_PIN):
+        recording = True
+    if recording:
         current_name = current_time()
         last_motion = timestr_to_delta(current_name)
         f = get_frame()
@@ -72,6 +74,7 @@ while True:
         else:
             bg = frame_buf[0]  # we only want to update bg if there is no activity
             active = False
+            recording = False
 
         frame_buf = frame_buf[1:] + [f_small]
     else:

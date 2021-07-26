@@ -77,7 +77,12 @@ while True:
                     print("Last alert was recent. Not sending.")
             active = True
         else:
-            bg = frame_buf[0]  # we only want to update bg if there is no activity
+            if active:  # end of active period
+                print("Stop active recording. Rebuilding cache.")
+                bg = frame_buf[-1]  # we only want to update bg if there is no activity
+                frame_buf = [imutils.resize(get_frame(), width=500) for i in range(CACHE_NUM)]
+            else:
+                bg = frame_buf[0]  # we only want to update bg if there is no activity
             active = False
             recording = False
             print("Stop recording.")

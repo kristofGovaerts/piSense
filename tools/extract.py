@@ -1,17 +1,20 @@
 import cv2
 import imutils
+import glob
 import numpy as np
 from tools.convert import *
+from tools.time import timestr_to_delta
+import matplotlib.pyplot as plt
 
 
-def extract_subject(im, bg, mode='rgb', output_size=128, buf=40):
+def extract_subject(im, bg, mode='rgb', output_size=(128, 128), pad=200, buf=40):
     """
-    Extracts a subje
-    :param im:
-    :param bg:
-    :param mode:
-    :param output_size:
-    :param buf:
+    Extracts the subject from an rgb image and associated background.
+    :param im: An image.
+    :param bg: A background.
+    :param mode: 'rgb' or 'gray', determines whether output is rgb or gray.
+    :param output_size: The size of the output image. Will be square.
+    :param buf: The amount of extra pixels to take
     :return:
     """
     img = cv2.imread(im)
@@ -26,39 +29,60 @@ def extract_subject(im, bg, mode='rgb', output_size=128, buf=40):
     try:
         largest_contour = contours[np.argmax([len(c) for c in contours])]
         x, y, w, h = cv2.boundingRect(largest_contour)
-        x, y, w, h = resize_rectangle(x, y, w, h, imgr.shape, img.shape, make_square=True)
+        cp = (int(round(x+w/2)), int(round(y+h/2)))  # center point
+        x = int(round(cp[0] - max(w, h)/2))
+        y = int(round(cp[1] - max(w, h)/2))
+        w, h = (max(w, h), max(w, h))
 
-        print(x, y, w, h)
-        print(img.shape)
-        if x + w + buf > img.shape[1]:
-            xl = img.shape[1]
+        x, y, w, h = resize_rectangle(x, y, w, h, imgr.shape, img.shape)
+        yl0 = y+pad-buf
+        yl = yl0+h+buf
+        xl0 = x+pad-buf
+        xl = xl0+w+buf
+
+        out = np.zeros((img.shape[0]+(2*pad), img.shape[1]+(2*pad), 3))
+        out = out.astype('uint8')
+        out[pad:-pad, pad:-pad, :] = img
+
+        if yl - yl0 == 0 or xl - xl0 == 0:
+            print("No output.")
+            out = None
         else:
-            xl = x + w + buf
-
-        if y + h + buf > img.shape[0]:
-            yl = img.shape[0]
-        else:
-            yl = y + h + buf
-        out = img[y-buf:yl, x-buf:xl, :]
-        print(out.shape)
-
-        out = imutils.resize(out, width=output_size)
-        if mode == 'gray':
-            out = bgr2gray(im)
+            out = out[yl0:yl, xl0:xl, :]
+            out = cv2.resize(out, dsize=output_size)
+            if mode == 'gray':
+                out = bgr2gray(im)
     except ValueError:
         print("No subject found.")
         out = None
     return out
 
 
-if __name__ == '__main__':
-    import glob
-    l=glob.glob(r'2021-07-31 09_49*')
-    bg = r'2021-07-31 09_49_47_BG.jpg'
+def get_images_and_backgrounds(ext='.jpg', folder=''):
+    l = glob.glob(folder + '*' + ext)
+    l = [i for i in l if '_D.jpg' not in i]
+    bgs = [i for i in l if '_BG.jpg' in i]
+    ims = [i for i in l if '_BG.jpg' not in i]
+    return ims, bgs
 
-    for i in l:
-        if '_D.jpg' not in i:
-            s = extract_subject(i, bg)
-            if s is not None:
-                plt.figure()
-                plt.imshow(s)
+
+def get_background_for_im(im, bgs):
+    imt = im.split('.')[0].replace('_', ':')
+    imtd = timestr_to_delta(imt)
+    bg_times = [timestr_to_delta(bg.split('_BG.')[0].replace('_', ':')) for bg in bgs
+                if (imtd - timestr_to_delta(bg.split('_BG.')[0].replace('_', ':'))).total_seconds() >= 0]
+    bg = str(np.max(bg_times)).replace(':', '_') + '_BG.jpg'
+    return bg
+
+
+if __name__ == '__main__':
+    import os
+    os.chdir(r'C:\Users\Kristof\Desktop\testPi\photos')
+    ims, bgs = get_images_and_backgrounds()
+    out = np.zeros((19*128, 19*128, 3)).astype('uint8')
+    for i, im in enumerate(ims):
+        ind = np.unravel_index(i, (19, 19))
+        bg = get_background_for_im(im, bgs)
+        s = extract_subject(im, bg, pad=500)
+        if s is not None:
+            out[128*ind[0]:128*ind[0]+128, 128*ind[1]:128*ind[1]+128, :] = s

@@ -16,7 +16,7 @@ def get_frame(bw=False):
     """Gets a single frame from the camera and returns it as an array.
     If bw == True, this frame is converted to grayscale."""
     with picamera.array.PiRGBArray(camera) as output:
-        camera.resolution = (1280, 780)
+        camera.resolution = (1280, 720)
         camera.capture(output, 'rgb')
         out = output.array
     if bw:

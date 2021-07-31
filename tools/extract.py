@@ -7,7 +7,7 @@ from tools.time import timestr_to_delta
 import matplotlib.pyplot as plt
 
 
-def extract_subject(im, bg, mode='rgb', output_size=(128, 128), pad=200, buf=40):
+def extract_subject(im, bg, thresh=0.075, mode='rgb', output_size=(128, 128), pad=200, buf=10):
     """
     Extracts the subject from an rgb image and associated background.
     :param im: An image.
@@ -23,8 +23,8 @@ def extract_subject(im, bg, mode='rgb', output_size=(128, 128), pad=200, buf=40)
     imgr = imutils.resize(img, width=bgn.shape[1])
     d = np.abs(bgr2gray(imgr).astype('float')/255-bgr2gray(bgn).astype('float')/255)
     db = cv2.GaussianBlur(d, (21,21), 0)
-    db[db<0.1] = 0
-    db[db>=0.1] = 1
+    db[db<thresh] = 0
+    db[db>=thresh] = 1
     contours, hierarchy = cv2.findContours(db.astype('uint8'), cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
     try:
         largest_contour = contours[np.argmax([len(c) for c in contours])]
@@ -79,10 +79,12 @@ if __name__ == '__main__':
     import os
     os.chdir(r'C:\Users\Kristof\Desktop\testPi\photos')
     ims, bgs = get_images_and_backgrounds()
-    out = np.zeros((19*128, 19*128, 3)).astype('uint8')
+    ax = int(round(np.sqrt(len(ims))))+1
+    out = np.zeros((ax*128, ax*128, 3)).astype('uint8')
     for i, im in enumerate(ims):
-        ind = np.unravel_index(i, (19, 19))
+        ind = np.unravel_index(i, (ax, ax))
         bg = get_background_for_im(im, bgs)
         s = extract_subject(im, bg, pad=500)
         if s is not None:
             out[128*ind[0]:128*ind[0]+128, 128*ind[1]:128*ind[1]+128, :] = s
+    plt.imshow(out)

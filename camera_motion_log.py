@@ -15,7 +15,8 @@ from sensors.camera import get_frame, compare_with_cache, write_difference_figur
 
 # globals
 CACHE_NUM = 3  # number of activations to cache, minimum amount to calculate activity from
-DELTA_THRESH = 0.01
+DELTA_THRESH = 0.01  # lower threshold - minimum num of pixels that have to change
+DELTA_THRESH2 = 0.6  # upper thresh - because if this is very high we've moved the camera!
 ALERT_INTERVAL = 120
 BG_INTERVAL = 120
 
@@ -54,7 +55,7 @@ while True:
             d = compare_frames(f_small, bg)
         else:
             d = compare_with_cache(f_small, frame_buf)
-        if d > DELTA_THRESH:
+        if DELTA_THRESH < d < DELTA_THRESH2:
             h, t = sense_temp_hum(sensor, wait=0)
             output = """Timestamp: {} --- Temperature: {}, humidity: {}, is_active: {}"""
             add_line([current_name, t, h, active])

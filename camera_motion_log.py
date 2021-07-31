@@ -16,7 +16,7 @@ from sensors.camera import get_frame, compare_with_cache, write_difference_figur
 # globals
 CACHE_NUM = 3  # number of activations to cache, minimum amount to calculate activity from
 DELTA_THRESH = 0.01  # lower threshold - minimum num of pixels that have to change
-DELTA_THRESH2 = 0.6  # upper thresh - because if this is very high we've moved the camera!
+DELTA_THRESH2 = 0.35  # upper thresh - because if this is very high we've moved the camera!
 ALERT_INTERVAL = 120
 BG_INTERVAL = 120
 

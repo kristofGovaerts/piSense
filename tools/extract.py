@@ -4,6 +4,7 @@ import glob
 import numpy as np
 from tools.convert import *
 from tools.time import timestr_to_delta
+import datetime
 import matplotlib.pyplot as plt
 
 
@@ -58,11 +59,14 @@ def extract_subject(im, bg, thresh=0.075, mode='rgb', output_size=(128, 128), pa
     return out
 
 
-def get_images_and_backgrounds(ext='.jpg', folder=''):
+def get_images_and_backgrounds(ext='.jpg', folder='', date=None):
     l = glob.glob(folder + '*' + ext)
     l = [i for i in l if '_D.jpg' not in i]
     bgs = [i for i in l if '_BG.jpg' in i]
     ims = [i for i in l if '_BG.jpg' not in i]
+    if date is not None:
+        ims = [i for i in ims if
+             timestr_to_delta(i.replace('_', ':').split('.')[0]).date() == date]
     return ims, bgs
 
 

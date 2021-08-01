@@ -4,20 +4,18 @@ this code senses motion using only the camera, assuming the motion sensor was ac
 
 import RPi.GPIO as GPIO
 import adafruit_dht
-import time, os
-import numpy as np
+import time
 import imutils
-import cv2
 from sensors.sense import sense_temp_hum, sense_motion
-from tools.reporting import *
+from output.reporting import *
 from tools.time import current_time, timestr_to_delta
-from sensors.camera import get_frame, compare_with_cache, write_difference_figure, compare_frames
+from sensors.camera import get_frame, compare_with_cache, compare_frames
 
 # globals
 CACHE_NUM = 3  # number of activations to cache, minimum amount to calculate activity from
 DELTA_THRESH = 0.01  # lower threshold - minimum num of pixels that have to change
 DELTA_THRESH2 = 0.35  # upper thresh - because if this is very high we've moved the camera!
-ALERT_INTERVAL = 120
+ALERT_INTERVAL = 600
 BG_INTERVAL = 120
 
 print("Initalizing sensors...")

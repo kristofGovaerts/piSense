@@ -1,4 +1,3 @@
-import sys
 import requests
 import numpy as np
 import datetime
@@ -54,18 +53,21 @@ def send_alert(c1, c2):
 
 def mosaic_for_date(date=datetime.date.today(), folder=''):
     ims, bgs = get_images_and_backgrounds(date=date, folder=folder)
-    ax = int(round(np.sqrt(len(ims))))+1
-    out = np.zeros((ax*128, ax*128, 3)).astype('uint8')
+    ax1 = int(np.ceil(np.sqrt(len(ims))))
+    ax2 = int(np.ceil(np.sqrt(len(ims))))
+    out = np.zeros((ax2*128, ax1*128, 3)).astype('uint8')
 
     for i, im in enumerate(ims):
         msg = "item {} of {}".format(i+1, len(ims))
         print(msg)
 
-        ind = np.unravel_index(i, (ax, ax))
+        ind = np.unravel_index(i, (ax1, ax2))
         bg = get_background_for_im(im, bgs)
         s = extract_subject(im, bg, pad=500)
         if s is not None:
             out[128*ind[0]:128*ind[0]+128, 128*ind[1]:128*ind[1]+128, :] = s
+        out = cv2.putText(out, str(i), (128*ind[1]+20, 128*ind[0]+20),
+                          fontFace = cv2.FONT_HERSHEY_COMPLEX, fontScale = 1, color = (250,225,100))
     return out
 
 
@@ -90,8 +92,6 @@ def log_for_date(date=datetime.date.today(), freq='30min', filename='log.csv'):
 def plot_for_date(date=datetime.date.today()):
     d = log_for_date(date=date)
     d['time'] = d.index
-    time_min = np.min(d.index)
-    time_max = np.max(d.index)
 
     fig, ax = plt.subplots(1,2, figsize = (14,6), sharey=True)
     hues=['orange', 'blue']
@@ -118,4 +118,4 @@ def plot_for_date(date=datetime.date.today()):
 if __name__ == '__main__':
     os.chdir(r'C:\Users\Kristof\Desktop\testPi\photos')
     o = mosaic_for_date()
-    cv2.imwrite('TESTMOSAIC.jpg', o)
+    cv2.imwrite('mosaic.jpg', o)

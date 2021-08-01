@@ -72,7 +72,7 @@ while True:
                     last_alert = timestr_to_delta(current_name)
                 elif last_alert is not None and (timestr_to_delta(current_name) -
                                                  last_alert).total_seconds() > ALERT_INTERVAL:
-                    send_alert(current_name + '.jpg', output.format(current_name, t, h, active))
+                    send_alert(current_name + '.jpg', output.format(current_name, t, h, True))
                     last_alert = timestr_to_delta(current_name)
                 else:
                     print("Last alert was recent. Not sending.")
@@ -80,10 +80,10 @@ while True:
         else:
             if active:  # end of active period
                 print("Stop active recording. Rebuilding cache.")
-                bg = frame_buf[-1]  # we only want to update bg if there is no activity
-                frame_buf = [imutils.resize(get_frame(), width=500) for i in range(CACHE_NUM)]
-            else:
-                bg = frame_buf[0]  # we only want to update bg if there is no activity
+#                frame_buf = [imutils.resize(get_frame(), width=500) for i in range(CACHE_NUM)]
+#                bg = frame_buf[-1]  # we only want to update bg if there is no activity
+#            else:
+#                bg = frame_buf[0]  # we only want to update bg if there is no activity
             active = False
             recording = False
             print("Stop recording.")

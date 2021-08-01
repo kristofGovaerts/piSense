@@ -14,7 +14,7 @@ tools.reporting features several logging tools. For instance, using tools.report
 
 We can also produce a mosaic for quick inspection of photos taken, which allows for a quick evaluation of whether the quality of subject detection is okay:
 
-![mosaic](/mosaic.png)
+![mosaic](/mosaic.jpg)
 
 ## Materials
 ### Necessary:

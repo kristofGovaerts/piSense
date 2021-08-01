@@ -5,8 +5,9 @@ import datetime
 from filestack import Client
 from tools.extract import get_images_and_backgrounds, get_background_for_im, extract_subject
 import pandas as pd
-import seaborn as sns
 import matplotlib.dates as mdates
+import cv2
+import os
 
 
 def save_report():
@@ -51,7 +52,7 @@ def send_alert(c1, c2):
         print("Error")
 
 
-def mosaic_for_date(date, folder=''):
+def mosaic_for_date(date=datetime.date.today(), folder=''):
     ims, bgs = get_images_and_backgrounds(date=date, folder=folder)
     ax = int(round(np.sqrt(len(ims))))+1
     out = np.zeros((ax*128, ax*128, 3)).astype('uint8')
@@ -112,3 +113,9 @@ def plot_for_date(date=datetime.date.today()):
         ax2.set_ylabel(p)
     fig.suptitle(date, fontsize=30)
     fig.savefig(str(date) + '_plot.png')
+
+
+if __name__ == '__main__':
+    os.chdir(r'C:\Users\Kristof\Desktop\testPi\photos')
+    o = mosaic_for_date()
+    cv2.imwrite('TESTMOSAIC.jpg', o)

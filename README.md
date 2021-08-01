@@ -26,10 +26,11 @@ We can also produce a mosaic for quick inspection of photos taken, which allows 
 
 ## Materials
 ### Necessary:
-- Raspberry Pi 4 Model B 
+- Raspberry Pi 4 Model B (other models should work too)
 - 1x DHT11 temperature & humidity sensor
 - 1x HC-SR501 PIR motion sensor
 - 1x Raspberry Pi Camera module with IR lights (any)
+- A subject to image! In this case, we use a Roborovski dwarf hamster.
 
 ### Optional:
 - Raspberry Pi T-Cobbler (40 pins)
@@ -44,5 +45,6 @@ We can also produce a mosaic for quick inspection of photos taken, which allows 
 - adafruit_dht: https://github.com/adafruit/Adafruit_CircuitPython_DHT
 - picamera
 - opencv-python (cv2)
+- pandas
 - imutils
 - RPi

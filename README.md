@@ -7,6 +7,15 @@ The camera refreshes the background every two minutes. When the passive infrared
 
  ![Figure_1](/Figure_1.png)
 
+## Logging
+tools.reporting features several logging tools. For instance, using tools.reporting.plot_for_date() we can produce an activity plot for either the current date or any provided date in datetime format:
+
+![dateplot](/2021-08-01_plot.png)
+
+We can also produce a mosaic for quick inspection of photos taken, which allows for a quick evaluation of whether the quality of subject detection is okay:
+
+![mosaic](/mosaic.png)
+
 ## Materials
 ### Necessary:
 - Raspberry Pi 4 Model B 

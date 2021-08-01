@@ -4,6 +4,8 @@ import numpy as np
 import cv2
 from tools.convert import *
 from tools.time import timestr_to_delta
+import matplotlib
+matplotlib.use('Agg')  # turn off visualisation or matplotlib.pyplot doesn't work
 import matplotlib.pyplot as plt
 import datetime
 

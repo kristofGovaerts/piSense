@@ -13,10 +13,12 @@ def extract_subject(im, bg, thresh=0.075, mode='rgb', output_size=(128, 128), pa
     Extracts the subject from an rgb image and associated background.
     :param im: An image.
     :param bg: A background.
+    :param thresh: A threshold value between 1 and 0. How different should pixels be?
     :param mode: 'rgb' or 'gray', determines whether output is rgb or gray.
     :param output_size: The size of the output image. Will be square.
+    :param pad: How many pixels to pad the image with. Should be larger if using larger images.
     :param buf: The amount of extra pixels to take
-    :return:
+    :return: A 2D (if mode = 'gray') or 3D (if mode = 'rgb') array with x/y dims equal to output_size.
     """
     img = cv2.imread(im)
     bgn = cv2.imread(bg)
@@ -45,7 +47,7 @@ def extract_subject(im, bg, thresh=0.075, mode='rgb', output_size=(128, 128), pa
         out = out.astype('uint8')
         out[pad:-pad, pad:-pad, :] = img
 
-        if yl - yl0 == 0 or xl - xl0 == 0:
+        if yl - yl0 == 0 or xl - xl0 == 0 or w * h < 50*50 or w * h > 500*500:
             print("No output.")
             out = None
         else:

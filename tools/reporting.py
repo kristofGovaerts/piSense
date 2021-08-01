@@ -4,6 +4,9 @@ import numpy as np
 import datetime
 from filestack import Client
 from tools.extract import get_images_and_backgrounds, get_background_for_im, extract_subject
+import pandas as pd
+import seaborn as sns
+import matplotlib.dates as mdates
 
 
 def save_report():
@@ -63,3 +66,49 @@ def mosaic_for_date(date, folder=''):
         if s is not None:
             out[128*ind[0]:128*ind[0]+128, 128*ind[1]:128*ind[1]+128, :] = s
     return out
+
+
+def log_for_date(date=datetime.date.today(), freq='30min', filename='log.csv'):
+    df = pd.read_csv(filename, sep='\t')
+    df['datetime'] = pd.to_datetime(df['time'])
+    df['date'] = [d.date() for d in df['datetime']]
+    df['time'] = [d.time() for d in df['datetime']]
+
+    dff = df[df['date']==date]
+    dff = dff.replace('None', None)
+    dff.temperature = pd.to_numeric(dff.temperature)
+    dff.humidity = pd.to_numeric(dff.humidity)
+
+    dffm = dff.groupby(pd.Grouper(key='datetime', freq=freq))\
+        .agg({'time':'count',
+              'temperature':'mean',
+              'humidity': 'mean'}).rename(columns={'time':'activations'})
+    return pd.DataFrame(dffm)
+
+
+def plot_for_date(date=datetime.date.today()):
+    d = log_for_date(date=date)
+    d['time'] = d.index
+    time_min = np.min(d.index)
+    time_max = np.max(d.index)
+
+    fig, ax = plt.subplots(1,2, figsize = (14,6), sharey=True)
+    hues=['orange', 'blue']
+    xfmt = mdates.DateFormatter('%H:%M')
+
+    for i, p in enumerate(('temperature', 'humidity')):
+        ax[i].plot_date(d.time, d["activations"], color="red", label="activations", linestyle="-")
+        ax[i].xaxis.set_major_formatter(xfmt)
+
+        ax2 = ax[i].twinx()
+        ax2.plot(d['time'], d[p],color=hues[i], label=p)
+
+        h1, l1 = ax[i].get_legend_handles_labels()
+        h2, l2 = ax2.get_legend_handles_labels()
+        ax[i].legend(h1 + h2, l1 + l2)
+        ax2.xaxis.set_major_formatter(xfmt)
+
+        ax[i].set_ylabel('# activations')
+        ax2.set_ylabel(p)
+    fig.suptitle(date, fontsize=30)
+    fig.savefig(str(date) + '_plot.png')

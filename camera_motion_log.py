@@ -62,7 +62,7 @@ while True:
             print("Activity detected! {}".format(np.round(d, 3)))
             print(output.format(current_name, t, h, active))
             cv2.imwrite(current_name + '.jpg', f)
-            write_difference_figure(bg, f_small, current_name + '_D.jpg')
+            # write_difference_figure(bg, f_small, current_name + '_D.jpg')
             if not active:
                 cv2.imwrite(current_name + '_BG.jpg', bg)
                 di = np.abs(np.array(cv2.cvtColor(bg, cv2.COLOR_RGB2GRAY)).astype('float32')

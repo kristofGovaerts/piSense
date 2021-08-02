@@ -7,33 +7,51 @@ import pandas as pd
 import matplotlib.dates as mdates
 import cv2
 import os
+import matplotlib
+matplotlib.use('Agg')  # turn off visualisation or matplotlib.pyplot doesn't work
+import matplotlib.pyplot as plt
 
 
-def save_report():
-    with open('log.csv', 'w') as f:
+def save_report(filename='log.csv', delimiter='\t'):
+    """
+    Initializes the report file in the current directory.
+    :return: Nothing, but a .csv file will be written.
+    """
+    with open(filename, 'w') as f:
         columns = ['time', 'temperature', 'humidity', 'is_active']
-        s = '\t'.join(columns) + '\n'
+        s = delimiter.join(columns) + '\n'
         f.write(s)
 
 
-def add_line(pars):
-    with open('log.csv', 'a') as f:
-        s = '\t'.join([str(p) for p in pars]) + '\n'
+def add_line(pars, filename='log.csv', delimiter='\t'):
+    """
+    :param pars: A list of parameters. Should correspond with the number of columns in the output file!
+    :param filename: The filename for the log file. Default 'log.csv' in the active directory.
+    :param delimiter: The delimiter for the output file. Default tab.
+    :return: Nothing, but a line will be appended to the log file.
+    """
+    with open(filename, 'a') as f:
+        s = delimiter.join([str(p) for p in pars]) + '\n'
         f.write(s)
 
 
 def read_keys():
-    """Reads the key.txt file from the root folder."""
+    """Reads the key.txt file from the root folder. This file should be provided by whichever user is
+    managing the APIs for file storage and reporting."""
     with open('keys.txt', 'r') as f:
         k1 = f.readline()
         k2 = f.readline()
     return k1, k2
 
 
-def send_alert(c1, c2):
-    """Test"""
-    # should add camera code here
-
+def send_alert(c1, c2=''):
+    """
+    Reporting code. This takes a local image address (c1), uploads it to Filestack, and sends the generated Filestack
+    link and an annotation line c2 to Telegram via IFTTT.
+    :param c1: A local image location.
+    :param c2: An optional annotation string.
+    :return:
+    """
     key1, key2 = [k.split('\n')[0] for k in read_keys()]
 
     # filestack code:
@@ -72,6 +90,14 @@ def mosaic_for_date(date=datetime.date.today(), folder=''):
 
 
 def log_for_date(date=datetime.date.today(), freq='30min', filename='log.csv'):
+    """
+    Generates an activity log for a particular date. A count of activations per time block (freq) as well as an average
+    for each measurement for each of these blocks is calculated.
+    :param date: A datetime.datetime object. Default today.
+    :param freq: Time bin size. Default 30min.
+    :param filename: The filename of the log file. Default 'log.csv' in the current active directory.
+    :return: A pandas dataframe.
+    """
     df = pd.read_csv(filename, sep='\t')
     df['datetime'] = pd.to_datetime(df['time'])
     df['date'] = [d.date() for d in df['datetime']]
@@ -102,7 +128,8 @@ def plot_for_date(date=datetime.date.today()):
         ax[i].xaxis.set_major_formatter(xfmt)
 
         ax2 = ax[i].twinx()
-        ax2.plot(d['time'], d[p],color=hues[i], label=p)
+        isf = np.isfinite(d[p])
+        ax2.plot(d['time'][isf], d[p][isf], color=hues[i], label=p)
 
         h1, l1 = ax[i].get_legend_handles_labels()
         h2, l2 = ax2.get_legend_handles_labels()
@@ -117,5 +144,6 @@ def plot_for_date(date=datetime.date.today()):
 
 if __name__ == '__main__':
     os.chdir(r'C:\Users\Kristof\Desktop\testPi\photos')
+    plot_for_date()
     o = mosaic_for_date()
     cv2.imwrite('mosaic.jpg', o)

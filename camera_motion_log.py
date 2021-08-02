@@ -1,5 +1,5 @@
 """
-this code senses motion using only the camera, assuming the motion sensor was activated once,, and generates a log.
+this code senses motion using only the camera, assuming the motion sensor was activated once, and generates a log.
 """
 
 import RPi.GPIO as GPIO
@@ -15,7 +15,7 @@ from sensors.camera import get_frame, compare_with_cache, compare_frames
 CACHE_NUM = 3  # number of activations to cache, minimum amount to calculate activity from
 DELTA_THRESH = 0.01  # lower threshold - minimum num of pixels that have to change
 DELTA_THRESH2 = 0.35  # upper thresh - because if this is very high we've moved the camera!
-ALERT_INTERVAL = 600
+ALERT_INTERVAL = 1800  # max one msg every half hour
 BG_INTERVAL = 120
 
 print("Initalizing sensors...")
@@ -66,11 +66,11 @@ while True:
                 di = np.abs(np.array(cv2.cvtColor(bg, cv2.COLOR_RGB2GRAY)).astype('float32')
                             - np.array(cv2.cvtColor(f_small, cv2.COLOR_RGB2GRAY)).astype('float32'))
                 if last_alert is None:
-                    send_alert(current_name + '.jpg', output.format(current_name, t, h, active))
+                    send_alert(current_name + '.jpg', c2=output.format(current_name, t, h, True))
                     last_alert = timestr_to_delta(current_name)
                 elif last_alert is not None and (timestr_to_delta(current_name) -
                                                  last_alert).total_seconds() > ALERT_INTERVAL:
-                    send_alert(current_name + '.jpg', output.format(current_name, t, h, True))
+                    send_alert(current_name + '.jpg', c2=output.format(current_name, t, h, True))
                     last_alert = timestr_to_delta(current_name)
                 else:
                     print("Last alert was recent. Not sending.")
@@ -86,14 +86,19 @@ while True:
             recording = False
             print("Stop recording.")
 
-        frame_buf = frame_buf[1:] + [f_small]
+        # frame_buf = frame_buf[1:] + [f_small]
     else:
-        if not active and (last_capture is None or (timestr_to_delta(current_time()) -
-                                                    last_capture).total_seconds() > BG_INTERVAL):
+        ct = timestr_to_delta(current_time())
+        if not active \
+                and ((last_capture is None
+                      or ct - last_capture).total_seconds() > BG_INTERVAL) \
+                and ((last_motion is None
+                      or ct - last_motion).total_seconds() > BG_INTERVAL):
             print("Refreshing background.")
             last_capture = timestr_to_delta(current_time())
             f = get_frame()
             f_small = imutils.resize(f, width=500)
             bg = f_small
             frame_buf = frame_buf[1:] + [f_small]
-    time.sleep(1)
+    time.sleep(1)  # This code runs once every second.
+    # If higher, camera frequency will increase but so will filesize & CPU load.

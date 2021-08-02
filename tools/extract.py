@@ -73,7 +73,7 @@ def get_images_and_backgrounds(ext='.jpg', folder='', date=datetime.date.today()
     :return: A list of image filenames, and background filenames.
     """
     l = glob.glob(folder + '*' + ext)
-    l = [i for i in l if '_D.jpg' not in i]
+    l = [i for i in l if '_D.jpg' not in i and 'mosaic' not in i]
     bgs = [i for i in l if '_BG.jpg' in i]
     ims = [i for i in l if '_BG.jpg' not in i]
     if date is not None:

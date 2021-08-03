@@ -27,9 +27,9 @@ The code is set up as follows:
 ## Logging
 tools.reporting features several logging tools. For instance, using tools.reporting.plot_for_date() we can produce an activity plot for either the current date or any provided date in datetime format:
 
-![dateplot](/2021-08-01_plot.png)
+![dateplot](/2021-08-02_plot.png)
 
-Here, we can clearly see that the subject hamster's peak activity times are between 1AM And 2AM. Although temperature drops over time, the change is very minor. Humidity also stays relatively stable. Probably in the winter temperature will vary more overnight.
+Here, we can clearly see that the subject hamster's peak activity times are at night, starting a bit before midnight and terminating around 6 - exactly the inverse of my own waking times. Temperature is remarkably stable. Humidity also stays relatively stable. Probably in the winter temperature will vary more overnight.
 
 We can also produce a mosaic for quick inspection of photos taken, which allows for a quick evaluation of whether the quality of subject detection is okay:
 

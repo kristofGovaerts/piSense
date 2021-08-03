@@ -122,6 +122,7 @@ def plot_for_date(date=datetime.date.today()):
     fig, ax = plt.subplots(1,2, figsize = (14,6), sharey=True)
     hues=['orange', 'blue']
     xfmt = mdates.DateFormatter('%H:%M')
+    lims=((15,30),(30,60))
 
     for i, p in enumerate(('temperature', 'humidity')):
         ax[i].plot_date(d.time, d["activations"], color="red", label="activations", linestyle="-")
@@ -130,6 +131,7 @@ def plot_for_date(date=datetime.date.today()):
         ax2 = ax[i].twinx()
         isf = np.isfinite(d[p])
         ax2.plot(d['time'][isf], d[p][isf], color=hues[i], label=p)
+        ax2.set_ylim(lims[i])
 
         h1, l1 = ax[i].get_legend_handles_labels()
         h2, l2 = ax2.get_legend_handles_labels()
@@ -144,6 +146,7 @@ def plot_for_date(date=datetime.date.today()):
 
 if __name__ == '__main__':
     os.chdir(r'C:\Users\Kristof\Desktop\testPi\photos')
-    plot_for_date()
-    o = mosaic_for_date()
-    cv2.imwrite('mosaic.jpg', o)
+    d=datetime.date(year=2021,month=8,day=2)
+    plot_for_date(date=d)
+    #o = mosaic_for_date(date=d)
+    #cv2.imwrite('mosaic.jpg', o)

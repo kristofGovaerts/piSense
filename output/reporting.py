@@ -12,13 +12,13 @@ matplotlib.use('Agg')  # turn off visualisation or matplotlib.pyplot doesn't wor
 import matplotlib.pyplot as plt
 
 
-def save_report(filename='log.csv', delimiter='\t'):
+def save_report(filename='log.csv', delimiter='\t', colnames=['time', 'temperature', 'humidity', 'is_active']):
     """
     Initializes the report file in the current directory.
     :return: Nothing, but a .csv file will be written.
     """
     with open(filename, 'w') as f:
-        columns = ['time', 'temperature', 'humidity', 'is_active']
+        columns = colnames
         s = delimiter.join(columns) + '\n'
         f.write(s)
 
@@ -69,11 +69,12 @@ def send_alert(c1, c2=''):
         print("Error")
 
 
-def mosaic_for_date(date=datetime.date.today(), folder=''):
+def mosaic_for_date(date=datetime.date.today(), folder='', area_limits=(1000.0, 5000.0)):
     ims, bgs = get_images_and_backgrounds(date=date, folder=folder)
     ax1 = int(np.ceil(np.sqrt(len(ims))))
     ax2 = int(np.ceil(np.sqrt(len(ims))))
     out = np.zeros((ax2*128, ax1*128, 3)).astype('uint8')
+    out2 = []
 
     for i, im in enumerate(ims):
         msg = "item {} of {}".format(i+1, len(ims))
@@ -81,12 +82,13 @@ def mosaic_for_date(date=datetime.date.today(), folder=''):
 
         ind = np.unravel_index(i, (ax1, ax2))
         bg = get_background_for_im(im, bgs)
-        s = extract_subject(im, bg, pad=500)
+        s, area = extract_subject(im, bg, pad=500, return_area=True)
+        out2.append(area)
         if s is not None:
             out[128*ind[0]:128*ind[0]+128, 128*ind[1]:128*ind[1]+128, :] = s
         out = cv2.putText(out, str(i), (128*ind[1]+20, 128*ind[0]+20),
                           fontFace = cv2.FONT_HERSHEY_COMPLEX, fontScale = 1, color = (250,225,100))
-    return out
+    return out, out2
 
 
 def log_for_date(date=datetime.date.today(), freq='30min', filename='log.csv'):
@@ -146,7 +148,7 @@ def plot_for_date(date=datetime.date.today()):
 
 if __name__ == '__main__':
     os.chdir(r'C:\Users\Kristof\Desktop\testPi\photos')
-    d=datetime.date(year=2021,month=8,day=2)
+    d=datetime.date(year=2021,month=8,day=20)
     plot_for_date(date=d)
-    #o = mosaic_for_date(date=d)
-    #cv2.imwrite('mosaic.jpg', o)
+    o = mosaic_for_date(date=d)
+    cv2.imwrite('mosaic' + str(d) + '.jpg', o[0])

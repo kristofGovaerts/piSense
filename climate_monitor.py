@@ -3,15 +3,13 @@ this code senses the room temperature and humidity and generates a time profile 
 """
 
 import adafruit_dht
-import os
 import time
 from sensors.sense import sense_temp_hum, sense_motion
 from output.reporting import *
 from tools.time import current_time, is_active, timestr_to_delta
-from sensors.camera import take_photo
 
 # globals
-TIME_INTERVAL = 1  # one check each ten minutes
+TIME_INTERVAL = 600  # one check each ten minutes
 FILENAME = 'climate_log.csv'
 
 # define pins
